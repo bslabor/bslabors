@@ -31,6 +31,30 @@
     .small{font-size:14px}
     .foot{opacity:.7;margin-top:14px}
     a{color:#93c5fd}
+
+    /* ===== 모바일 최적화 ===== */
+    @media (max-width: 480px) {
+      body { padding: 16px; }
+      .wrap { padding: 18px; border-radius: 16px; }
+      h1 { font-size: 20px; line-height: 1.35; margin-bottom: 8px; }
+      .sub { font-size: 14px; margin-bottom: 14px; }
+      .target .num { font-size: 28px; }
+      .screen { padding: 12px; }
+      .big { font-size: 36px; letter-spacing: 0.5px; }
+      .label { font-size: 12px; }
+      .row { gap: 8px; }
+      .pill { padding: 6px 10px; font-size: 12px; }
+      .grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      button { padding: 14px 12px; font-size: 16px; min-height: 44px; }
+      #leaderboard { margin: 16px auto; padding: 12px; }
+      #leaderboard h3 { font-size: 16px; }
+      #leaderboard li { font-size: 14px; line-height: 1.5; }
+    }
+    @media (min-width: 481px) and (max-width: 768px) {
+      h1 { font-size: 22px; }
+      .big { font-size: 48px; }
+      button { min-height: 44px; }
+    }
   </style>
 </head>
 <body>
@@ -75,7 +99,7 @@
   </div>
 
   <script>
-    const TARGET = 10320; // 목표 10,320ms
+    const TARGET = 10320;
     const $ = s => document.querySelector(s);
     const fmt = n => Number(n).toLocaleString('ko-KR');
 
@@ -120,8 +144,6 @@
       cancelAnimationFrame(rafId);
       tick();
     }
-
-    // 오버레이 스크립트에서 호출하는 래퍼
     function startGame(){ start(); }
 
     function stop() {
@@ -138,8 +160,7 @@
       elStatus.className = (diff === 0) ? "success" : "warn";
       updateBest(diff);
 
-      // ▼ 추가된 점수 저장 부분 ▼
-      const points = Math.max(0, 20000 - diff); // 오차 작을수록 점수 큼
+      const points = Math.max(0, 20000 - diff);
       saveScore(points);
     }
 
@@ -177,7 +198,7 @@
     });
   </script>
 
-  <!-- 시작 오버레이 -->
+  <!-- 닉네임 오버레이 -->
   <div id="startOverlay" style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9999;">
     <div style="background:#fff;padding:24px 20px;border-radius:14px;max-width:360px;width:90%;box-shadow:0 10px 30px #0003;">
       <h2 style="margin:0 0 12px;">닉네임을 입력하세요</h2>
@@ -191,35 +212,33 @@
     </div>
   </div>
 
-  <!-- 순위표 -->
+  <!-- 글로벌 순위표 -->
   <div id="leaderboard" style="max-width:520px;margin:24px auto;padding:16px 12px;border:1px solid #eee;border-radius:14px;">
-    <h3 style="margin:0 0 8px;">🏆 순위표 (내 기기)</h3>
+    <h3 style="margin:0 0 8px;">🌍 글로벌 순위표 (Top 10)</h3>
     <ol id="leaderboardList" style="margin:0;padding-left:20px;"></ol>
   </div>
 
+  <!-- Supabase 연결 + 글로벌 함수 -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    const startOverlay = document.getElementById('startOverlay');
-    const nicknameInput = document.getElementById('nicknameInput');
-    const startBtn      = document.getElementById('startBtn');
+    const { createClient } = supabase;
+    const SUPABASE_URL = "https://uwlpasqxtnfnqrhwjbvo.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHBhc3F4dG5mbnFyaHdqYnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4ODIzMTUsImV4cCI6MjA3MjQ1ODMxNX0.B25x8vutVM5_znvMkcbS8L-zjaYgtronVM0V-f8ef4Y";
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const KEY_NAME = 'game_nickname';
-    const KEY_LB   = 'game_leaderboard';
-
-    function getNickname() { return localStorage.getItem(KEY_NAME) || ''; }
-    function setNickname(n) { localStorage.setItem(KEY_NAME, n); }
+    function getNickname(){ return localStorage.getItem('game_nickname') || ''; }
+    function setNickname(n){ localStorage.setItem('game_nickname', n); }
 
     function revealOverlayIfNeeded(){
       const saved = getNickname();
       if (saved) { nicknameInput.value = saved; startBtn.disabled = false; }
       startOverlay.style.display = 'flex';
     }
-
     nicknameInput.addEventListener('input', () => {
       const ok = nicknameInput.value.trim().length >= 1;
       startBtn.disabled = !ok;
       startBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
     });
-
     startBtn.addEventListener('click', () => {
       const n = nicknameInput.value.trim();
       if (!n) return;
@@ -229,23 +248,31 @@
     });
     revealOverlayIfNeeded();
 
-    function loadLB(){ try { return JSON.parse(localStorage.getItem(KEY_LB)) || []; } catch { return []; } }
-    function saveLB(arr){ localStorage.setItem(KEY_LB, JSON.stringify(arr)); }
-
-    function saveScore(score){
+    // 글로벌 순위 저장
+    async function saveScore(score){
       const name = getNickname() || '익명';
-      const lb = loadLB();
-      lb.push({ name, score: Number(score)||0, ts: Date.now() });
-      lb.sort((a,b) => (b.score - a.score) || (a.ts - b.ts));
-      saveLB(lb.slice(0, 10));
-      renderLeaderboard();
+      const s = Math.max(0, Number(score)||0);
+      const { error } = await sb.from('scores').insert({ name, score: s });
+      if (error) console.error('saveScore error:', error);
+      await renderLeaderboard();
     }
 
-    function renderLeaderboard(){
+    // 글로벌 순위표 불러오기
+    async function renderLeaderboard(){
       const list = document.getElementById('leaderboardList');
-      const lb = loadLB();
+      list.innerHTML = '<li>불러오는 중...</li>';
+      const { data, error } = await sb
+        .from('scores')
+        .select('name, score, created_at')
+        .order('score',{ascending:false})
+        .order('created_at',{ascending:true})
+        .limit(10);
+      if (error){
+        list.innerHTML = '<li>불러오기 실패</li>';
+        return;
+      }
       list.innerHTML = '';
-      lb.forEach(row => {
+      data.forEach(row => {
         const li = document.createElement('li');
         li.textContent = `${row.name} — ${row.score}`;
         list.appendChild(li);
@@ -253,6 +280,5 @@
     }
     renderLeaderboard();
   </script>
-
 </body>
 </html>
