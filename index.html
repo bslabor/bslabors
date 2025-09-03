@@ -98,6 +98,10 @@
       <button id="retry" class="primary">다시 도전</button>
       <button id="share">결과 복사</button>
     </div>
+    <!-- ✅ 안내문구 추가 -->
+    <p style="margin-top:16px; font-size:14px; color:#e5e7eb; text-align:center; opacity:0.9;">
+      이 화면을 캡처하고, <b>결과복사</b> 버튼을 눌러 구글폼에 붙여넣기 한 후 제출해주세요.
+    </p>
   </div>
 
   <!-- ===== 닉네임 오버레이 ===== -->
@@ -118,7 +122,7 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     const TARGET = 10320;
-    const RATE_SECONDS = 30; // 30초 쿨다운만
+    const RATE_SECONDS = 30;
     const $ = s => document.querySelector(s);
     const fmt = n => Number(n).toLocaleString('ko-KR');
 
@@ -168,7 +172,6 @@
       const s=Math.max(0,Number(score)||0);
 
       try{
-        // 최근 제출 시간 조회 (30초 쿨다운)
         const { data: recentRows }=await sb.from('scores')
           .select('created_at').eq('name',name).order('created_at',{ascending:false}).limit(1);
 
@@ -220,7 +223,7 @@
     function showResultView(score,diff){rScore.textContent=`${fmt(score)} ms`;rDiff.textContent=`${fmt(diff)} ms`;gameView.style.display='none';resultView.style.display='block';resultView.scrollIntoView({behavior:'smooth',block:'start'});}
     function backToGame(){resultView.style.display='none';gameView.style.display='block';resetAll();}
 
-    // ===== 결과 복사 (수정된 함수) =====
+    // ===== 결과 복사 =====
     function copyResult(){
       let scoreTxt = rScore && rScore.textContent !== '-' ? rScore.textContent : elScore.textContent;
       let diffTxt  = rDiff  && rDiff.textContent  !== '-' ? rDiff.textContent  : elDiff.textContent;
@@ -234,7 +237,7 @@
       });
     }
 
-    // 버튼 이벤트 연결
+    // 버튼 이벤트
     document.getElementById("start").addEventListener("click",start);
     document.getElementById("stop").addEventListener("click",stop);
     document.getElementById("reset").addEventListener("click",resetAll);
@@ -243,6 +246,3 @@
     document.getElementById("share").addEventListener("click",copyResult);
 
     addEventListener("keydown",e=>{if(e.key==="s"||e.key==="S")start();if(e.key===" "||e.key==="Enter"){e.preventDefault();stop();}if(e.key==="r"||e.key==="R")resetAll();});
-  </script>
-</body>
-</html>
