@@ -58,12 +58,14 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
+
+  <!-- ===== 게임 화면 ===== -->
+  <div id="gameView" class="wrap">
     <h1>부산노동권익센터 2026년 최저임금 맞히기 챌린지</h1>
     <div class="sub">
       버튼을 눌러 시간을 멈추세요! 목표는 2026년 최저임금 <b>10,320원</b>에 맞추는 것!<br>
       노동의 가치를 함께 기억하는 재미있는 도전입니다.<br>
-      게임 후에는 아래 <b>"결과복사"</b> 버튼을 눌러 화면을 캡처해 구글폼에 제출해주세요!
+      게임 후에는 아래 <b>"결과 복사"</b> 버튼을 눌러 화면을 캡처해 구글폼에 제출해주세요!
     </div>
 
     <div class="target">
@@ -73,12 +75,8 @@
 
     <div class="screen">
       <div class="big" id="timer">0 ms</div>
-      <div class="label">
-        <span id="status" class="muted">대기 중</span>
-      </div>
-      <div class="bar" aria-hidden="true">
-        <div class="fill" id="fill"></div>
-      </div>
+      <div class="label"><span id="status" class="muted">대기 중</span></div>
+      <div class="bar" aria-hidden="true"><div class="fill" id="fill"></div></div>
       <div class="row">
         <span class="pill">내 기록: <b id="score">-</b></span>
         <span class="pill">오차: <b id="diff">-</b></span>
@@ -98,11 +96,49 @@
     </div>
   </div>
 
+  <!-- ===== 결과 화면 (분리) ===== -->
+  <div id="resultView" class="wrap" style="display:none">
+    <h2 style="margin:0 0 8px;">결과</h2>
+    <div class="row" style="margin:8px 0 16px">
+      <span class="pill">내 기록: <b id="rScore">-</b></span>
+      <span class="pill">오차: <b id="rDiff">-</b></span>
+    </div>
+
+    <!-- 글로벌 순위표(이 화면에서만 표시) -->
+    <div id="leaderboard" style="max-width:520px;margin:12px 0 0;padding:16px 12px;border:1px solid #eee;border-radius:14px;">
+      <h3 style="margin:0 0 8px;">🌍 글로벌 순위표 (Top 10)</h3>
+      <ol id="leaderboardList" style="margin:0;padding-left:20px;"></ol>
+    </div>
+
+    <div class="grid" style="margin-top:16px">
+      <button id="retry" class="primary">다시 도전</button>
+      <button id="share">결과 복사</button>
+    </div>
+  </div>
+
+  <!-- ===== 닉네임 오버레이 ===== -->
+  <div id="startOverlay" style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:#fff;padding:24px 20px;border-radius:14px;max-width:360px;width:90%;box-shadow:0 10px 30px #0003;">
+      <h2 style="margin:0 0 12px;color:#111">닉네임을 입력하세요</h2>
+      <input id="nicknameInput" type="text" placeholder="예: rock_won" maxlength="16"
+            style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px;">
+      <button id="startBtn" disabled
+              style="margin-top:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#111;color:#fff;font-size:16px;cursor:not-allowed;">
+        시작하기
+      </button>
+      <p style="color:#666;font-size:12px;margin-top:8px;">한 번만 입력하면 저장돼요.</p>
+    </div>
+  </div>
+
+  <!-- Supabase 클라이언트 -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
+    /************ 공통 유틸 & 게임 로직 ************/
     const TARGET = 10320;
     const $ = s => document.querySelector(s);
     const fmt = n => Number(n).toLocaleString('ko-KR');
 
+    // 게임 화면 요소
     const elTimer = $("#timer");
     const elStatus = $("#status");
     const elFill = $("#fill");
@@ -116,10 +152,7 @@
     let best = Number(localStorage.getItem("best_diff") || Infinity);
 
     function updateBest(diff) {
-      if (diff < best) {
-        best = diff;
-        localStorage.setItem("best_diff", String(best));
-      }
+      if (diff < best) { best = diff; localStorage.setItem("best_diff", String(best)); }
       elBest.textContent = (best === Infinity) ? "-" : `${fmt(best)} ms`;
     }
     updateBest(Infinity);
@@ -146,6 +179,25 @@
     }
     function startGame(){ start(); }
 
+    // 결과 화면 전환
+    const gameView = document.getElementById('gameView');
+    const resultView = document.getElementById('resultView');
+    const rScore = document.getElementById('rScore');
+    const rDiff  = document.getElementById('rDiff');
+
+    function showResultView(score, diff){
+      rScore.textContent = `${fmt(score)} ms`;
+      rDiff.textContent  = `${fmt(diff)} ms`;
+      gameView.style.display = 'none';
+      resultView.style.display = 'block';
+      resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function backToGame(){
+      resultView.style.display = 'none';
+      gameView.style.display = 'block';
+      resetAll();
+    }
+
     function stop() {
       if (!running) return;
       running = false;
@@ -160,8 +212,9 @@
       elStatus.className = (diff === 0) ? "success" : "warn";
       updateBest(diff);
 
-      const points = Math.max(0, 20000 - diff);
-      saveScore(points);
+      const points = Math.max(0, 20000 - diff); // 오차 작을수록 점수 큼
+      saveScore(points);                         // 글로벌 DB 저장
+      showResultView(score, diff);               // 결과 화면으로 전환
     }
 
     function resetAll() {
@@ -177,8 +230,11 @@
     }
 
     function copyResult() {
-      const score = elScore.textContent.replace(" ms","");
-      const diff = elDiff.textContent.replace(" ms","");
+      // 결과 화면/게임 화면 모두 대응
+      const scoreTxt = rScore.textContent !== '-' ? rScore.textContent : elScore.textContent;
+      const diffTxt  = rDiff.textContent  !== '-' ? rDiff.textContent  : elDiff.textContent;
+      const score = scoreTxt.replace(" ms","");
+      const diff  = diffTxt.replace(" ms","");
       const text = `10320 챌린지 결과\n- 기록: ${score} ms\n- 오차: ${diff} ms`;
       navigator.clipboard.writeText(text).then(()=>{
         elStatus.textContent = "결과를 클립보드에 복사했어요. 폼에 붙여넣기!";
@@ -190,41 +246,25 @@
     $("#stop").addEventListener("click", stop);
     $("#reset").addEventListener("click", resetAll);
     $("#copy").addEventListener("click", copyResult);
+    document.getElementById('retry').addEventListener('click', backToGame);
+    document.getElementById('share').addEventListener('click', copyResult);
 
     addEventListener("keydown", (e)=>{
       if (e.key === "s" || e.key === "S") start();
       if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); }
       if (e.key === "r" || e.key === "R") resetAll();
     });
-  </script>
 
-  <!-- 닉네임 오버레이 -->
-  <div id="startOverlay" style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9999;">
-    <div style="background:#fff;padding:24px 20px;border-radius:14px;max-width:360px;width:90%;box-shadow:0 10px 30px #0003;">
-      <h2 style="margin:0 0 12px;">닉네임을 입력하세요</h2>
-      <input id="nicknameInput" type="text" placeholder="예: rock_won" maxlength="16"
-            style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px;">
-      <button id="startBtn" disabled
-              style="margin-top:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#111;color:#fff;font-size:16px;cursor:not-allowed;">
-        시작하기
-      </button>
-      <p style="color:#666;font-size:12px;margin-top:8px;">한 번만 입력하면 저장돼요.</p>
-    </div>
-  </div>
-
-  <!-- 글로벌 순위표 -->
-  <div id="leaderboard" style="max-width:520px;margin:24px auto;padding:16px 12px;border:1px solid #eee;border-radius:14px;">
-    <h3 style="margin:0 0 8px;">🌍 글로벌 순위표 (Top 10)</h3>
-    <ol id="leaderboardList" style="margin:0;padding-left:20px;"></ol>
-  </div>
-
-  <!-- Supabase 연결 + 글로벌 함수 -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
+    /************ 닉네임 & Supabase ************/
     const { createClient } = supabase;
-    const SUPABASE_URL = "https://uwlpasqxtnfnqrhwjbvo.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHBhc3F4dG5mbnFyaHdqYnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4ODIzMTUsImV4cCI6MjA3MjQ1ODMxNX0.B25x8vutVM5_znvMkcbS8L-zjaYgtronVM0V-f8ef4Y";
+    const SUPABASE_URL     = "https://uwlpasqxtnfnqrhwjbvo.supabase.co";
+    const SUPABASE_ANON_KEY= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHBhc3F4dG5mbnFyaHdqYnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4ODIzMTUsImV4cCI6MjA3MjQ1ODMxNX0.B25x8vutVM5_znvMkcbS8L-zjaYgtronVM0V-f8ef4Y";
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ★ 버그 픽스: DOM 요소 참조(반드시 필요)
+    const startOverlay  = document.getElementById('startOverlay');
+    const nicknameInput = document.getElementById('nicknameInput');
+    const startBtn      = document.getElementById('startBtn');
 
     function getNickname(){ return localStorage.getItem('game_nickname') || ''; }
     function setNickname(n){ localStorage.setItem('game_nickname', n); }
@@ -257,9 +297,10 @@
       await renderLeaderboard();
     }
 
-    // 글로벌 순위표 불러오기
+    // 글로벌 순위표
     async function renderLeaderboard(){
       const list = document.getElementById('leaderboardList');
+      if (!list) return;
       list.innerHTML = '<li>불러오는 중...</li>';
       const { data, error } = await sb
         .from('scores')
@@ -278,6 +319,7 @@
         list.appendChild(li);
       });
     }
+    // 결과 화면에 들어오면 볼 수 있도록 최초에도 호출
     renderLeaderboard();
   </script>
 </body>
