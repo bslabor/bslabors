@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>부산노동권익센터 2026년 최저임금 맞히기 챌린지</title>
+  <style>
+    :root { --bg:#0f172a; --card:#111827; --text:#e5e7eb; --accent:#22d3ee; }
+    *{box-sizing:border-box;font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;}
+    body{margin:0;background:linear-gradient(180deg,#0b1020,#101827);color:var(--text);display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;}
+    .wrap{width:100%;max-width:720px;background:var(--card);border:1px solid #1f2937;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:28px;}
+    h1{margin:0 0 6px;font-size:26px;font-weight:800;letter-spacing:-0.2px;line-height:1.4}
+    .sub{opacity:.9;margin-bottom:18px;line-height:1.6}
+    .target{display:flex;gap:8px;align-items:baseline;margin:8px 0 18px}
+    .target .num{font-size:36px;font-weight:800;color:var(--accent)}
+    .screen{background:#0b1220;border:1px solid #1e293b;border-radius:14px;padding:16px;margin:12px 0 18px}
+    .big{font-variant-numeric:tabular-nums;letter-spacing:1px;font-size:56px;font-weight:900}
+    .label{opacity:.7;margin-top:6px}
+    .bar{position:relative;height:12px;background:#0b1325;border:1px solid #1f2a40;border-radius:999px;margin:16px 0}
+    .fill{position:absolute;inset:0 0 0 auto;width:0;background:linear-gradient(90deg,#2563eb,#22d3ee);border-radius:999px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+    button{all:unset;cursor:pointer;text-align:center;padding:14px 16px;border-radius:12px;border:1px solid #2b3548;background:#0f1a2f}
+    button.primary{background:linear-gradient(180deg,#2563eb,#0ea5e9);border-color:#1e40af;color:white;font-weight:800}
+    button.danger{border-color:#7f1d1d;background:#1a0f12}
+    button:hover{filter:brightness(1.08)}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .pill{background:#0c1428;border:1px solid #1f2a40;border-radius:999px;padding:8px 12px}
+    .muted{opacity:.7}
+    .success{color:#22d3ee}
+    .warn{color:#fbbf24}
+    .small{font-size:14px}
+    .foot{opacity:.7;margin-top:14px}
+    a{color:#93c5fd}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>부산노동권익센터 2026년 최저임금 맞히기 챌린지</h1>
+    <div class="sub">
+      버튼을 눌러 시간을 멈추세요! 목표는 2026년 최저임금 <b>10,320원</b>에 맞추는 것!<br>
+      노동의 가치를 함께 기억하는 재미있는 도전입니다.<br>
+      게임 후에는 아래 <b>"결과복사"</b> 버튼을 눌러 화면을 캡처해 구글폼에 제출해주세요!
+    </div>
+
+    <div class="target">
+      <div>목표값:</div>
+      <div class="num" id="target">10,320 ms</div>
+    </div>
+
+    <div class="screen">
+      <div class="big" id="timer">0 ms</div>
+      <div class="label">
+        <span id="status" class="muted">대기 중</span>
+      </div>
+      <div class="bar" aria-hidden="true">
+        <div class="fill" id="fill"></div>
+      </div>
+      <div class="row">
+        <span class="pill">내 기록: <b id="score">-</b></span>
+        <span class="pill">오차: <b id="diff">-</b></span>
+        <span class="pill">최고기록(오차): <b id="best">-</b></span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <button id="start" class="primary">시작</button>
+      <button id="stop">정지</button>
+      <button id="reset" class="danger">리셋</button>
+      <button id="copy">결과 복사</button>
+    </div>
+
+    <div class="foot small">
+      팁: 정지 후 <b>결과 복사</b>를 눌러 점수/오차를 붙여넣고, 화면을 캡처해 구글폼에 제출하세요.
+    </div>
+  </div>
+
+  <script>
+    const TARGET = 10320; // 목표 10,320ms
+    const $ = s => document.querySelector(s);
+    const fmt = n => Number(n).toLocaleString('ko-KR');
+
+    const elTimer = $("#timer");
+    const elStatus = $("#status");
+    const elFill = $("#fill");
+    const elScore = $("#score");
+    const elDiff = $("#diff");
+    const elBest = $("#best");
+    const elTarget = $("#target");
+    elTarget.textContent = `${fmt(TARGET)} ms`;
+
+    let running = false, startTime = 0, rafId = 0, elapsed = 0;
+    let best = Number(localStorage.getItem("best_diff") || Infinity);
+
+    function updateBest(diff) {
+      if (diff < best) {
+        best = diff;
+        localStorage.setItem("best_diff", String(best));
+      }
+      elBest.textContent = (best === Infinity) ? "-" : `${fmt(best)} ms`;
+    }
+    updateBest(Infinity);
+
+    function tick() {
+      const now = performance.now();
+      elapsed = Math.round(now - startTime);
+      elTimer.textContent = `${fmt(elapsed)} ms`;
+      const pct = Math.min(elapsed / (TARGET * 2), 1);
+      elFill.style.width = `${pct * 100}%`;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      startTime = performance.now();
+      elStatus.textContent = "측정 중… 멈추려면 [정지]";
+      elStatus.className = "success";
+      elScore.textContent = "-";
+      elDiff.textContent = "-";
+      cancelAnimationFrame(rafId);
+      tick();
+    }
+
+    // 오버레이 스크립트에서 호출하는 래퍼
+    function startGame(){ start(); }
+
+    function stop() {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(rafId);
+
+      const score = elapsed;
+      const diff = Math.abs(score - TARGET);
+
+      elScore.textContent = `${fmt(score)} ms`;
+      elDiff.textContent = `${fmt(diff)} ms`;
+      elStatus.textContent = (diff === 0) ? "퍼펙트! 👏" : "기록 고정. 다시 도전해보세요!";
+      elStatus.className = (diff === 0) ? "success" : "warn";
+      updateBest(diff);
+
+      // ▼ 추가된 점수 저장 부분 ▼
+      const points = Math.max(0, 20000 - diff); // 오차 작을수록 점수 큼
+      saveScore(points);
+    }
+
+    function resetAll() {
+      running = false;
+      cancelAnimationFrame(rafId);
+      elapsed = 0;
+      elTimer.textContent = "0 ms";
+      elFill.style.width = "0%";
+      elScore.textContent = "-";
+      elDiff.textContent = "-";
+      elStatus.textContent = "대기 중";
+      elStatus.className = "muted";
+    }
+
+    function copyResult() {
+      const score = elScore.textContent.replace(" ms","");
+      const diff = elDiff.textContent.replace(" ms","");
+      const text = `10320 챌린지 결과\n- 기록: ${score} ms\n- 오차: ${diff} ms`;
+      navigator.clipboard.writeText(text).then(()=>{
+        elStatus.textContent = "결과를 클립보드에 복사했어요. 폼에 붙여넣기!";
+        elStatus.className = "success";
+      });
+    }
+
+    $("#start").addEventListener("click", start);
+    $("#stop").addEventListener("click", stop);
+    $("#reset").addEventListener("click", resetAll);
+    $("#copy").addEventListener("click", copyResult);
+
+    addEventListener("keydown", (e)=>{
+      if (e.key === "s" || e.key === "S") start();
+      if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); }
+      if (e.key === "r" || e.key === "R") resetAll();
+    });
+  </script>
+
+  <!-- 시작 오버레이 -->
+  <div id="startOverlay" style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:#fff;padding:24px 20px;border-radius:14px;max-width:360px;width:90%;box-shadow:0 10px 30px #0003;">
+      <h2 style="margin:0 0 12px;">닉네임을 입력하세요</h2>
+      <input id="nicknameInput" type="text" placeholder="예: rock_won" maxlength="16"
+            style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px;">
+      <button id="startBtn" disabled
+              style="margin-top:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#111;color:#fff;font-size:16px;cursor:not-allowed;">
+        시작하기
+      </button>
+      <p style="color:#666;font-size:12px;margin-top:8px;">한 번만 입력하면 저장돼요.</p>
+    </div>
+  </div>
+
+  <!-- 순위표 -->
+  <div id="leaderboard" style="max-width:520px;margin:24px auto;padding:16px 12px;border:1px solid #eee;border-radius:14px;">
+    <h3 style="margin:0 0 8px;">🏆 순위표 (내 기기)</h3>
+    <ol id="leaderboardList" style="margin:0;padding-left:20px;"></ol>
+  </div>
+
+  <script>
+    const startOverlay = document.getElementById('startOverlay');
+    const nicknameInput = document.getElementById('nicknameInput');
+    const startBtn      = document.getElementById('startBtn');
+
+    const KEY_NAME = 'game_nickname';
+    const KEY_LB   = 'game_leaderboard';
+
+    function getNickname() { return localStorage.getItem(KEY_NAME) || ''; }
+    function setNickname(n) { localStorage.setItem(KEY_NAME, n); }
+
+    function revealOverlayIfNeeded(){
+      const saved = getNickname();
+      if (saved) { nicknameInput.value = saved; startBtn.disabled = false; }
+      startOverlay.style.display = 'flex';
+    }
+
+    nicknameInput.addEventListener('input', () => {
+      const ok = nicknameInput.value.trim().length >= 1;
+      startBtn.disabled = !ok;
+      startBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    });
+
+    startBtn.addEventListener('click', () => {
+      const n = nicknameInput.value.trim();
+      if (!n) return;
+      setNickname(n);
+      startOverlay.style.display = 'none';
+      if (typeof startGame === 'function') startGame();
+    });
+    revealOverlayIfNeeded();
+
+    function loadLB(){ try { return JSON.parse(localStorage.getItem(KEY_LB)) || []; } catch { return []; } }
+    function saveLB(arr){ localStorage.setItem(KEY_LB, JSON.stringify(arr)); }
+
+    function saveScore(score){
+      const name = getNickname() || '익명';
+      const lb = loadLB();
+      lb.push({ name, score: Number(score)||0, ts: Date.now() });
+      lb.sort((a,b) => (b.score - a.score) || (a.ts - b.ts));
+      saveLB(lb.slice(0, 10));
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard(){
+      const list = document.getElementById('leaderboardList');
+      const lb = loadLB();
+      list.innerHTML = '';
+      lb.forEach(row => {
+        const li = document.createElement('li');
+        li.textContent = `${row.name} — ${row.score}`;
+        list.appendChild(li);
+      });
+    }
+    renderLeaderboard();
+  </script>
+
+</body>
+</html>
