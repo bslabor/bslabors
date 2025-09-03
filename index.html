@@ -6,10 +6,10 @@
   <title>부산노동권익센터 2026년 최저임금 맞히기 챌린지</title>
   <style>
     :root { --bg:#0f172a; --card:#111827; --text:#e5e7eb; --accent:#22d3ee; }
-    *{box-sizing:border-box;font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;}
-    body{margin:0;background:linear-gradient(180deg,#0b1020,#101827);color:var(--text);display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px;}
-    .wrap{width:100%;max-width:720px;background:var(--card);border:1px solid #1f2937;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:28px;}
-    h1{margin:0 0 6px;font-size:26px;font-weight:800;letter-spacing:-0.2px;line-height:1.4}
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    body{margin:0;background:linear-gradient(180deg,#0b1020,#101827);color:var(--text);display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:720px;background:var(--card);border:1px solid #1f2937;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:28px}
+    h1{margin:0 0 6px;font-size:26px;font-weight:800;letter-spacing:-.2px;line-height:1.4}
     .sub{opacity:.9;margin-bottom:18px;line-height:1.6}
     .target{display:flex;gap:8px;align-items:baseline;margin:8px 0 18px}
     .target .num{font-size:36px;font-weight:800;color:var(--accent)}
@@ -18,42 +18,29 @@
     .label{opacity:.7;margin-top:6px}
     .bar{position:relative;height:12px;background:#0b1325;border:1px solid #1f2a40;border-radius:999px;margin:16px 0}
     .fill{position:absolute;inset:0 0 0 auto;width:0;background:linear-gradient(90deg,#2563eb,#22d3ee);border-radius:999px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
-    button{all:unset;cursor:pointer;text-align:center;padding:14px 16px;border-radius:12px;border:1px solid #2b3548;background:#0f1a2f}
-    button.primary{background:linear-gradient(180deg,#2563eb,#0ea5e9);border-color:#1e40af;color:white;font-weight:800}
-    button.danger{border-color:#7f1d1d;background:#1a0f12}
-    button:hover{filter:brightness(1.08)}
     .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
     .pill{background:#0c1428;border:1px solid #1f2a40;border-radius:999px;padding:8px 12px}
-    .muted{opacity:.7}
-    .success{color:#22d3ee}
-    .warn{color:#fbbf24}
-    .small{font-size:14px}
-    .foot{opacity:.7;margin-top:14px}
+    button{all:unset;cursor:pointer;text-align:center;padding:14px 16px;border-radius:12px;border:1px solid #2b3548;background:#0f1a2f}
+    button.primary{background:linear-gradient(180deg,#2563eb,#0ea5e9);border-color:#1e40af;color:#fff;font-weight:800}
+    button.danger{border-color:#7f1d1d;background:#1a0f12}
+    button:hover{filter:brightness(1.08)}
+    .muted{opacity:.7}.success{color:#22d3ee}.warn{color:#fbbf24}
+    .small{font-size:14px}.foot{opacity:.7;margin-top:14px}
     a{color:#93c5fd}
-
-    /* ===== 모바일 최적화 ===== */
-    @media (max-width: 480px) {
-      body { padding: 16px; }
-      .wrap { padding: 18px; border-radius: 16px; }
-      h1 { font-size: 20px; line-height: 1.35; margin-bottom: 8px; }
-      .sub { font-size: 14px; margin-bottom: 14px; }
-      .target .num { font-size: 28px; }
-      .screen { padding: 12px; }
-      .big { font-size: 36px; letter-spacing: 0.5px; }
-      .label { font-size: 12px; }
-      .row { gap: 8px; }
-      .pill { padding: 6px 10px; font-size: 12px; }
-      .grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      button { padding: 14px 12px; font-size: 16px; min-height: 44px; }
-      #leaderboard { margin: 16px auto; padding: 12px; }
-      #leaderboard h3 { font-size: 16px; }
-      #leaderboard li { font-size: 14px; line-height: 1.5; }
+    @media (max-width:480px){
+      body{padding:16px}.wrap{padding:18px;border-radius:16px}
+      h1{font-size:20px;line-height:1.35;margin-bottom:8px}
+      .sub{font-size:14px;margin-bottom:14px}
+      .target .num{font-size:28px}.screen{padding:12px}
+      .big{font-size:36px;letter-spacing:.5px}.label{font-size:12px}
+      .row{gap:8px}.pill{padding:6px 10px;font-size:12px}
+      .grid{grid-template-columns:1fr 1fr;gap:8px}
+      button{padding:14px 12px;font-size:16px;min-height:44px}
+      #leaderboard{margin:16px auto;padding:12px} #leaderboard h3{font-size:16px}
+      #leaderboard li{font-size:14px;line-height:1.5}
     }
-    @media (min-width: 481px) and (max-width: 768px) {
-      h1 { font-size: 22px; }
-      .big { font-size: 48px; }
-      button { min-height: 44px; }
+    @media (min-width:481px) and (max-width:768px){
+      h1{font-size:22px}.big{font-size:48px} button{min-height:44px}
     }
   </style>
 </head>
@@ -76,7 +63,7 @@
     <div class="screen">
       <div class="big" id="timer">0 ms</div>
       <div class="label"><span id="status" class="muted">대기 중</span></div>
-      <div class="bar" aria-hidden="true"><div class="fill" id="fill"></div></div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
       <div class="row">
         <span class="pill">내 기록: <b id="score">-</b></span>
         <span class="pill">오차: <b id="diff">-</b></span>
@@ -96,20 +83,17 @@
     </div>
   </div>
 
-  <!-- ===== 결과 화면 (분리) ===== -->
+  <!-- ===== 결과 화면 ===== -->
   <div id="resultView" class="wrap" style="display:none">
     <h2 style="margin:0 0 8px;">결과</h2>
     <div class="row" style="margin:8px 0 16px">
       <span class="pill">내 기록: <b id="rScore">-</b></span>
       <span class="pill">오차: <b id="rDiff">-</b></span>
     </div>
-
-    <!-- 글로벌 순위표(이 화면에서만 표시) -->
     <div id="leaderboard" style="max-width:520px;margin:12px 0 0;padding:16px 12px;border:1px solid #eee;border-radius:14px;">
       <h3 style="margin:0 0 8px;">🌍 글로벌 순위표 (Top 10)</h3>
       <ol id="leaderboardList" style="margin:0;padding-left:20px;"></ol>
     </div>
-
     <div class="grid" style="margin-top:16px">
       <button id="retry" class="primary">다시 도전</button>
       <button id="share">결과 복사</button>
@@ -120,207 +104,130 @@
   <div id="startOverlay" style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9999;">
     <div style="background:#fff;padding:24px 20px;border-radius:14px;max-width:360px;width:90%;box-shadow:0 10px 30px #0003;">
       <h2 style="margin:0 0 12px;color:#111">닉네임을 입력하세요</h2>
-      <input id="nicknameInput" type="text" placeholder="예: rock_won" maxlength="16"
-            style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px;">
+      <input id="nicknameInput" type="text" maxlength="16"
+             style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:16px">
       <button id="startBtn" disabled
-              style="margin-top:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#111;color:#fff;font-size:16px;cursor:not-allowed;">
+              style="margin-top:12px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#111;color:#fff;font-size:16px;cursor:not-allowed">
         시작하기
       </button>
-      <p style="color:#666;font-size:12px;margin-top:8px;">한 번만 입력하면 저장돼요.</p>
+      <p style="color:#666;font-size:12px;margin-top:8px">한 번만 입력하면 저장돼요.</p>
     </div>
   </div>
 
-  <!-- Supabase 클라이언트 -->
+  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    /************ 공통 유틸 & 게임 로직 ************/
     const TARGET = 10320;
+    const RATE_SECONDS = 30; // 30초 쿨다운만
     const $ = s => document.querySelector(s);
     const fmt = n => Number(n).toLocaleString('ko-KR');
 
-    // 게임 화면 요소
-    const elTimer = $("#timer");
-    const elStatus = $("#status");
-    const elFill = $("#fill");
-    const elScore = $("#score");
-    const elDiff = $("#diff");
-    const elBest = $("#best");
-    const elTarget = $("#target");
-    elTarget.textContent = `${fmt(TARGET)} ms`;
+    const elTimer=$("#timer"),elStatus=$("#status"),elFill=$("#fill"),
+          elScore=$("#score"),elDiff=$("#diff"),elBest=$("#best"),elTarget=$("#target");
+    elTarget.textContent=`${fmt(TARGET)} ms`;
 
-    let running = false, startTime = 0, rafId = 0, elapsed = 0;
-    let best = Number(localStorage.getItem("best_diff") || Infinity);
+    const gameView=document.getElementById('gameView'),
+          resultView=document.getElementById('resultView'),
+          rScore=document.getElementById('rScore'),rDiff=document.getElementById('rDiff');
 
-    function updateBest(diff) {
-      if (diff < best) { best = diff; localStorage.setItem("best_diff", String(best)); }
-      elBest.textContent = (best === Infinity) ? "-" : `${fmt(best)} ms`;
-    }
-    updateBest(Infinity);
+    const startOverlay=document.getElementById('startOverlay'),
+          nicknameInput=document.getElementById('nicknameInput'),
+          startBtn=document.getElementById('startBtn');
 
-    function tick() {
-      const now = performance.now();
-      elapsed = Math.round(now - startTime);
-      elTimer.textContent = `${fmt(elapsed)} ms`;
-      const pct = Math.min(elapsed / (TARGET * 2), 1);
-      elFill.style.width = `${pct * 100}%`;
-      rafId = requestAnimationFrame(tick);
-    }
+    const { createClient }=supabase;
+    const SUPABASE_URL="https://uwlpasqxtnfnqrhwjbvo.supabase.co";
+    const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHBhc3F4dG5mbnFyaHdqYnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4ODIzMTUsImV4cCI6MjA3MjQ1ODMxNX0.B25x8vutVM5_znvMkcbS8L-zjaYgtronVM0V-f8ef4Y";
+    const sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-    function start() {
-      if (running) return;
-      running = true;
-      startTime = performance.now();
-      elStatus.textContent = "측정 중… 멈추려면 [정지]";
-      elStatus.className = "success";
-      elScore.textContent = "-";
-      elDiff.textContent = "-";
-      cancelAnimationFrame(rafId);
-      tick();
-    }
-    function startGame(){ start(); }
-
-    // 결과 화면 전환
-    const gameView = document.getElementById('gameView');
-    const resultView = document.getElementById('resultView');
-    const rScore = document.getElementById('rScore');
-    const rDiff  = document.getElementById('rDiff');
-
-    function showResultView(score, diff){
-      rScore.textContent = `${fmt(score)} ms`;
-      rDiff.textContent  = `${fmt(diff)} ms`;
-      gameView.style.display = 'none';
-      resultView.style.display = 'block';
-      resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    function backToGame(){
-      resultView.style.display = 'none';
-      gameView.style.display = 'block';
-      resetAll();
-    }
-
-    function stop() {
-      if (!running) return;
-      running = false;
-      cancelAnimationFrame(rafId);
-
-      const score = elapsed;
-      const diff = Math.abs(score - TARGET);
-
-      elScore.textContent = `${fmt(score)} ms`;
-      elDiff.textContent = `${fmt(diff)} ms`;
-      elStatus.textContent = (diff === 0) ? "퍼펙트! 👏" : "기록 고정. 다시 도전해보세요!";
-      elStatus.className = (diff === 0) ? "success" : "warn";
-      updateBest(diff);
-
-      const points = Math.max(0, 20000 - diff); // 오차 작을수록 점수 큼
-      saveScore(points);                         // 글로벌 DB 저장
-      showResultView(score, diff);               // 결과 화면으로 전환
-    }
-
-    function resetAll() {
-      running = false;
-      cancelAnimationFrame(rafId);
-      elapsed = 0;
-      elTimer.textContent = "0 ms";
-      elFill.style.width = "0%";
-      elScore.textContent = "-";
-      elDiff.textContent = "-";
-      elStatus.textContent = "대기 중";
-      elStatus.className = "muted";
-    }
-
-    function copyResult() {
-      // 결과 화면/게임 화면 모두 대응
-      const scoreTxt = rScore.textContent !== '-' ? rScore.textContent : elScore.textContent;
-      const diffTxt  = rDiff.textContent  !== '-' ? rDiff.textContent  : elDiff.textContent;
-      const score = scoreTxt.replace(" ms","");
-      const diff  = diffTxt.replace(" ms","");
-      const text = `10320 챌린지 결과\n- 기록: ${score} ms\n- 오차: ${diff} ms`;
-      navigator.clipboard.writeText(text).then(()=>{
-        elStatus.textContent = "결과를 클립보드에 복사했어요. 폼에 붙여넣기!";
-        elStatus.className = "success";
-      });
-    }
-
-    $("#start").addEventListener("click", start);
-    $("#stop").addEventListener("click", stop);
-    $("#reset").addEventListener("click", resetAll);
-    $("#copy").addEventListener("click", copyResult);
-    document.getElementById('retry').addEventListener('click', backToGame);
-    document.getElementById('share').addEventListener('click', copyResult);
-
-    addEventListener("keydown", (e)=>{
-      if (e.key === "s" || e.key === "S") start();
-      if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); }
-      if (e.key === "r" || e.key === "R") resetAll();
-    });
-
-    /************ 닉네임 & Supabase ************/
-    const { createClient } = supabase;
-    const SUPABASE_URL     = "https://uwlpasqxtnfnqrhwjbvo.supabase.co";
-    const SUPABASE_ANON_KEY= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3bHBhc3F4dG5mbnFyaHdqYnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4ODIzMTUsImV4cCI6MjA3MjQ1ODMxNX0.B25x8vutVM5_znvMkcbS8L-zjaYgtronVM0V-f8ef4Y";
-    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // ★ 버그 픽스: DOM 요소 참조(반드시 필요)
-    const startOverlay  = document.getElementById('startOverlay');
-    const nicknameInput = document.getElementById('nicknameInput');
-    const startBtn      = document.getElementById('startBtn');
-
-    function getNickname(){ return localStorage.getItem('game_nickname') || ''; }
-    function setNickname(n){ localStorage.setItem('game_nickname', n); }
+    function getNickname(){return localStorage.getItem('game_nickname')||''}
+    function setNickname(n){localStorage.setItem('game_nickname',n)}
 
     function revealOverlayIfNeeded(){
-      const saved = getNickname();
-      if (saved) { nicknameInput.value = saved; startBtn.disabled = false; }
-      startOverlay.style.display = 'flex';
+      const saved=getNickname();
+      if(saved){nicknameInput.value=saved;startBtn.disabled=false;}
+      startOverlay.style.display='flex';
     }
-    nicknameInput.addEventListener('input', () => {
-      const ok = nicknameInput.value.trim().length >= 1;
-      startBtn.disabled = !ok;
-      startBtn.style.cursor = ok ? 'pointer' : 'not-allowed';
+    nicknameInput.addEventListener('input',()=>{
+      const ok=nicknameInput.value.trim().length>=1;
+      startBtn.disabled=!ok; startBtn.style.cursor=ok?'pointer':'not-allowed';
     });
-    startBtn.addEventListener('click', () => {
-      const n = nicknameInput.value.trim();
-      if (!n) return;
-      setNickname(n);
-      startOverlay.style.display = 'none';
-      if (typeof startGame === 'function') startGame();
+    function startGame(){start();}
+    startBtn.addEventListener('click',()=>{
+      const n=nicknameInput.value.trim(); if(!n)return;
+      setNickname(n); startOverlay.style.display='none'; startGame();
     });
     revealOverlayIfNeeded();
 
-    // 글로벌 순위 저장
+    function sanitizeName(n){
+      n=(n||'').trim().slice(0,16).replace(/[^\p{L}\p{N}_-]/gu,'');
+      return n||'익명';
+    }
+
     async function saveScore(score){
-      const name = getNickname() || '익명';
-      const s = Math.max(0, Number(score)||0);
-      const { error } = await sb.from('scores').insert({ name, score: s });
-      if (error) console.error('saveScore error:', error);
+      const name=sanitizeName(getNickname()||'익명');
+      const s=Math.max(0,Number(score)||0);
+
+      try{
+        // 최근 제출 시간 조회 (30초 쿨다운)
+        const { data: recentRows }=await sb.from('scores')
+          .select('created_at').eq('name',name).order('created_at',{ascending:false}).limit(1);
+
+        if(recentRows && recentRows.length>0){
+          const lastAt=new Date(recentRows[0].created_at).getTime();
+          const diffSec=Math.floor((Date.now()-lastAt)/1000);
+          if(diffSec<RATE_SECONDS){
+            alert(`너무 빠르게 제출했어요. ${RATE_SECONDS-diffSec}초 후에 다시 시도해주세요.`);
+            return;
+          }
+        }
+
+        const { error }=await sb.from('scores').insert({name,score:s});
+        if(error){alert('제출 제한에 걸렸어요. 잠시 후 다시 시도해주세요.');console.error(error);return;}
+      }catch(e){console.error(e);alert('저장 중 오류 발생');return;}
+
       await renderLeaderboard();
     }
 
-    // 글로벌 순위표
     async function renderLeaderboard(){
-      const list = document.getElementById('leaderboardList');
-      if (!list) return;
-      list.innerHTML = '<li>불러오는 중...</li>';
-      const { data, error } = await sb
-        .from('scores')
+      const list=document.getElementById('leaderboardList'); if(!list)return;
+      list.innerHTML='<li>불러오는 중...</li>';
+      const { data,error }=await sb.from('scores')
         .select('name, score, created_at')
-        .order('score',{ascending:false})
-        .order('created_at',{ascending:true})
-        .limit(10);
-      if (error){
-        list.innerHTML = '<li>불러오기 실패</li>';
-        return;
-      }
-      list.innerHTML = '';
-      data.forEach(row => {
-        const li = document.createElement('li');
-        li.textContent = `${row.name} — ${row.score}`;
+        .order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
+      if(error){list.innerHTML='<li>불러오기 실패</li>';return;}
+      list.innerHTML='';
+      data.forEach(row=>{
+        const li=document.createElement('li');
+        li.textContent=`${row.name} — ${row.score}`;
         list.appendChild(li);
       });
     }
-    // 결과 화면에 들어오면 볼 수 있도록 최초에도 호출
     renderLeaderboard();
+
+    // 게임 로직
+    let running=false,startTime=0,rafId=0,elapsed=0;
+    let best=Number(localStorage.getItem("best_diff")||Infinity);
+    function updateBest(diff){if(diff<best){best=diff;localStorage.setItem("best_diff",String(best))}elBest.textContent=(best===Infinity)?"-":`${fmt(best)} ms`;}
+    updateBest(Infinity);
+
+    function tick(){const now=performance.now();elapsed=Math.round(now-startTime);elTimer.textContent=`${fmt(elapsed)} ms`;const pct=Math.min(elapsed/(TARGET*2),1);elFill.style.width=`${pct*100}%`;rafId=requestAnimationFrame(tick);}
+
+    function start(){if(running)return;running=true;startTime=performance.now();elStatus.textContent="측정 중… 멈추려면 [정지]";elStatus.className="success";elScore.textContent="-";elDiff.textContent="-";cancelAnimationFrame(rafId);tick();}
+    function stop(){if(!running)return;running=false;cancelAnimationFrame(rafId);const score=elapsed;const diff=Math.abs(score-TARGET);elScore.textContent=`${fmt(score)} ms`;elDiff.textContent=`${fmt(diff)} ms`;elStatus.textContent=(diff===0)?"퍼펙트! 👏":"기록 고정. 다시 도전해보세요!";elStatus.className=(diff===0)?"success":"warn";updateBest(diff);const points=Math.max(0,20000-diff);saveScore(points);showResultView(score,diff);}
+    function resetAll(){running=false;cancelAnimationFrame(rafId);elapsed=0;elTimer.textContent="0 ms";elFill.style.width="0%";elScore.textContent="-";elDiff.textContent="-";elStatus.textContent="대기 중";elStatus.className="muted";}
+
+    function showResultView(score,diff){rScore.textContent=`${fmt(score)} ms`;rDiff.textContent=`${fmt(diff)} ms`;gameView.style.display='none';resultView.style.display='block';resultView.scrollIntoView({behavior:'smooth',block:'start'});}
+    function backToGame(){resultView.style.display='none';gameView.style.display='block';resetAll();}
+    function copyResult(){const scoreTxt=rScore.textContent!=='-'?rScore.textContent:elScore.textContent;const diffTxt=rDiff.textContent!=='-'?rDiff.textContent:elDiff.textContent;const text=`10320 챌린지 결과\n- 기록: ${scoreTxt.replace(' ms','')} ms\n- 오차: ${diffTxt.replace(' ms','')} ms`;navigator.clipboard.writeText(text).then(()=>{elStatus.textContent="결과를 클립보드에 복사했어요. 폼에 붙여넣기!";elStatus.className="success";});}
+
+    document.getElementById("start").addEventListener("click",start);
+    document.getElementById("stop").addEventListener("click",stop);
+    document.getElementById("reset").addEventListener("click",resetAll);
+    document.getElementById("copy").addEventListener("click",copyResult);
+    document.getElementById("retry").addEventListener("click",backToGame);
+    document.getElementById("share").addEventListener("click",copyResult);
+
+    addEventListener("keydown",e=>{if(e.key==="s"||e.key==="S")start();if(e.key===" "||e.key==="Enter"){e.preventDefault();stop();}if(e.key==="r"||e.key==="R")resetAll();});
   </script>
 </body>
 </html>
