@@ -195,6 +195,7 @@
         .select('name, score, created_at')
         .order('score',{ascending:false}).order('created_at',{ascending:true}).limit(10);
       if(error){list.innerHTML='<li>불러오기 실패</li>';return;}
+      if(!data || data.length===0){list.innerHTML='<li>아직 기록이 없어요.</li>';return;}
       list.innerHTML='';
       data.forEach(row=>{
         const li=document.createElement('li');
@@ -204,7 +205,7 @@
     }
     renderLeaderboard();
 
-    // 게임 로직
+    // ===== 게임 로직 =====
     let running=false,startTime=0,rafId=0,elapsed=0;
     let best=Number(localStorage.getItem("best_diff")||Infinity);
     function updateBest(diff){if(diff<best){best=diff;localStorage.setItem("best_diff",String(best))}elBest.textContent=(best===Infinity)?"-":`${fmt(best)} ms`;}
@@ -218,8 +219,22 @@
 
     function showResultView(score,diff){rScore.textContent=`${fmt(score)} ms`;rDiff.textContent=`${fmt(diff)} ms`;gameView.style.display='none';resultView.style.display='block';resultView.scrollIntoView({behavior:'smooth',block:'start'});}
     function backToGame(){resultView.style.display='none';gameView.style.display='block';resetAll();}
-    function copyResult(){const scoreTxt=rScore.textContent!=='-'?rScore.textContent:elScore.textContent;const diffTxt=rDiff.textContent!=='-'?rDiff.textContent:elDiff.textContent;const text=`10320 챌린지 결과\n- 기록: ${scoreTxt.replace(' ms','')} ms\n- 오차: ${diffTxt.replace(' ms','')} ms`;navigator.clipboard.writeText(text).then(()=>{elStatus.textContent="결과를 클립보드에 복사했어요. 폼에 붙여넣기!";elStatus.className="success";});}
 
+    // ===== 결과 복사 (수정된 함수) =====
+    function copyResult(){
+      let scoreTxt = rScore && rScore.textContent !== '-' ? rScore.textContent : elScore.textContent;
+      let diffTxt  = rDiff  && rDiff.textContent  !== '-' ? rDiff.textContent  : elDiff.textContent;
+      scoreTxt = scoreTxt || "0 ms"; diffTxt = diffTxt || "0 ms";
+      const text = `10320 챌린지 결과\n- 기록: ${scoreTxt.replace(' ms','')} ms\n- 오차: ${diffTxt.replace(' ms','')} ms`;
+      navigator.clipboard.writeText(text).then(()=>{
+        alert("✅ 결과를 클립보드에 복사했어요. 구글폼에 붙여넣기 해주세요!");
+      }).catch(err=>{
+        console.error("Clipboard error:", err);
+        alert("⚠️ 복사 실패! 직접 선택해서 Ctrl+C 해주세요.");
+      });
+    }
+
+    // 버튼 이벤트 연결
     document.getElementById("start").addEventListener("click",start);
     document.getElementById("stop").addEventListener("click",stop);
     document.getElementById("reset").addEventListener("click",resetAll);
